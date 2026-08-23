@@ -118,7 +118,7 @@ def admin():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-@app.route(' / ')
+@app.route('/')
 def home():
     return "<h1>Bienvennue sur Argent de poche </h1>"
 if __name__ == '__main__':
