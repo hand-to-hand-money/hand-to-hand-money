@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 
 # CONFIG NOTIF EMAIL - CHANGE ÇA
 TON_EMAIL = "ton.email@gmail.com"  # L'email où tu veux recevoir les notifs
-MOT_DE_PASSE_APP = "abcd efgh ijkl mnop" # Le code de 16 caractères de Google
+MOT_DE_PASSE_APP = "st62 5oyq xept d7ue qwoq v2ii 7zeq l24a" # Learactères de Google
 
 class Demande(db.Model):
     id = db.Column(db.Integer, primary_key=True)
