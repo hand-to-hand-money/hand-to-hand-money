@@ -11,9 +11,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///demandes.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+import os # tu l'as déjà ligne 5
+
 # CONFIG NOTIF EMAIL - CHANGE ÇA
-TON_EMAIL = "ljuanriccardo@gmail.com"  # L'email où tu veux recevoir les notifs
-MOT_DE_PASSE_APP = "spnlrxmsizflifwz" # Learactères de Google
+TON_EMAIL = os.environ.get('ljuanriccardo@gmail.com')  # L'email où tu veux recevoir les notifs
+MOT_DE_PASSE_APP = os.environ.get('spnlrxmsizflifwz') # Les 16 caractères de Google 
 
 class Demande(db.Model):
     id = db.Column(db.Integer, primary_key=True)
