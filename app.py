@@ -118,7 +118,13 @@ def admin():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-
+@app.route(' / ')
+def home():
+    return """
+    <h1>Bienvennue sur Argent de poche </h1>
+    <p>Votre application bancaire est en ligne !</p>
+    <p><a href='login'>se connecter</a></p>
+    """
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
