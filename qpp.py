@@ -12,8 +12,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # CONFIG NOTIF EMAIL - CHANGE ÇA
-TON_EMAIL = "ton.email@gmail.com"  # L'email où tu veux recevoir les notifs
-MOT_DE_PASSE_APP = "spnl rxms izfl ifwz" # Learactères de Google
+TON_EMAIL = "ljuanriccardo@gmail.com"  # L'email où tu veux recevoir les notifs
+MOT_DE_PASSE_APP = "spnlrxmsizflifwz" # Learactères de Google
 
 class Demande(db.Model):
     id = db.Column(db.Integer, primary_key=True)
