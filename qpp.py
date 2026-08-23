@@ -120,12 +120,9 @@ def logout():
     return redirect(url_for('login'))
 @app.route(' / ')
 def home():
-    return """
-    <h1>Bienvennue sur Argent de poche </h1>
-    <p>Votre application bancaire est en ligne !</p>
-    <p><a href='login'>se connecter</a></p>
-    """
+    return "<h1>Bienvennue sur Argent de poche </h1>"
 if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=int(os.environ.get('PORT',5000)))
     with app.app_context():
         db.create_all()
         if not Client.query.get("ADMIN001"):
