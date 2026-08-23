@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Bienvenue {{ current_user.nom }}</h2>
+<div class="card mb-4 bg-success text-white">
+  <div class="card-body">
+    <h5>Solde du compte: {{ compte.numero }}</h5>
+    <h2>{{ "{:,.0f}".format(compte.solde) }} FCFA</h2>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">Effectuer une opération</div>
+  <div class="card-body">
+    <form method="POST" action="/action">
+      <select name="action_type" class="form-select mb-2">
+        <option value="depot">Dépôt</option>
+        <option value="retrait">Retrait</option>
+        <option value="transfert">Transfert</option>
+        <option value="pret">Demande de Prêt</option>
+      </select>
+      <input type="number" name="montant" placeholder="Montant FCFA" class="form-control mb-2" required>
+      <input type="text" name="destination" placeholder="N° Compte destination - si transfert" class="form-control mb-2">
+      <input type="number" name="duree" placeholder="Durée prêt en mois - si prêt" class="form-control mb-2">
+      <button type="submit" class="btn btn-primary">Valider</button>
+    </form>
+  </div>
+</div>
+
+<h4>Historique</h4>
+<table class="table">
+  <thead><tr><th>Date</th><th>Type</th><th>Montant</th><th>Frais</th></tr></thead>
+  <tbody>
+    {% for t in transactions %}
+    <tr><td>{{ t.date.strftime('%d/%m/%Y') }}</td><td>{{ t.type }}</td><td>{{ "{:,.0f}".format(t.montant) }}</td><td>{{ "{:,.0f}".format(t.frais) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 
