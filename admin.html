@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Panneau Admin</h2>
+<h4>Clients</h4>
+<table class="table table-sm">
+  <thead><tr><th>Nom</th><th>Email</th><th>Compte</th><th>Solde</th></tr></thead>
+  <tbody>
+    {% for client, compte in clients %}
+    <tr><td>{{ client.nom }}</td><td>{{ client.email }}</td><td>{{ compte.numero }}</td><td>{{ "{:,.0f}".format(compte.solde) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h4>Demandes de Prêt en attente</h4>
+<table class="table table-sm">
+  <thead><tr><th>Client ID</th><th>Montant</th><th>Mensualité</th></tr></thead>
+  <tbody>
+    {% for p in prets %}
+    <tr><td>{{ p.client_id }}</td><td>{{ "{:,.0f}".format(p.montant) }}</td><td>{{ "{:,.0f}".format(p.mensualite) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 
