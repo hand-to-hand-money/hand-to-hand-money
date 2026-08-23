@@ -1,3 +1,34 @@
+from flask import Flask, render_template_string
+import os
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Argent de Poche</title>
+        <style>
+            body { font-family: Arial; text-align: center; padding: 50px; background: #f0f8ff; }
+            h1 { color: #2e7d32; }
+            .btn { background: #2e7d32; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-size: 18px; }
+        </style>
+    </head>
+    <body>
+        <h1>💰 Bienvenue sur Argent de Poche 💰</h1>
+        <p>Demande ton argent de poche en 1 clic</p>
+        <a href="/demander" class="btn">Faire une demande</a>
+    </body>
+    </html>
+    ''')
+
+@app.route('/demander')
+def demander():
+    return "<h1>Formulaire arrive bientôt</h1>" 
+
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 app = Flask(__name__)
 from flask_sqlalchemy import SQLAlchemy
