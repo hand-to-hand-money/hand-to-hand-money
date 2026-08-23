@@ -6,7 +6,7 @@ import bcrypt
 import uuid
 from datetime import datetime
 
-app = Flask(__name__)
+app = flask(__name__)
 app.config['SECRET_KEY'] = 'banque_secrete_2026'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banque.db'
 db = SQLAlchemy(app)
