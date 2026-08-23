@@ -128,10 +128,33 @@ def demande():
         return f"<h1>Merci {nouvelle_demande.nom} !</h1><p>Ta demande de {nouvelle_demande.montant} FCFA a été reçue.</p><a href='/'>Retour</a>"
     return render_template_string(FORM_HTML)
 
+from functools import wraps
+from flask import request, Response
+
+# TES IDENTIFIANTS ADMIN
+USERNAME = "1-hthadmin"
+PASSWORD = "Ljr8098933112*"
+
+def check_auth(username, password):
+    return username == USERNAME and password == PASSWORD
+
+def authenticate():
+    return Response(
+    'Accès refusé. Il faut se connecter.',
+    401,
+    {'WWW-Authenticate': 'Basic realm="Admin Argent de Poche"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route("/admin")
+@requires_auth
 def admin():
     toutes_demandes = Demande.query.all()
-    return render_template_string(ADMIN_HTML, demandes=toutes_demandes)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000))) 
+    return render_template_string(ADMIN_HTML, demandes=toutes_demandes) 
