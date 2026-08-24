@@ -22,6 +22,14 @@
     {% endwith %}
 
     <div class="form">
+    <h3>Créer un nouveau compte</h3>
+    <form method="POST" action="{{ url_for('creer_compte') }}">
+        <input type="text" name="nom_compte" placeholder="Nom du compte: Business, Famille..." required>
+        <button type="submit">Créer</button>
+    </form>
+</div> 
+
+    <div class="form">
         <h3>Nouvelle Opération</h3>
         <form method="POST">
             <select name="type" required>
