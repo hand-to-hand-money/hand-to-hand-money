@@ -70,3 +70,39 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True) 
+ nom = db.Column(db.String(100), nullable=False)
+    montant = db.Column(db.Float, nullable=False)
+    date = db.Column(db.String(20), nullable=False)
+
+def envoyer_email_notif(nom, montant):
+    if not TON_EMAIL or not MOT_DE_PASSE_APP:
+        print("ERREUR: Variables email non définies")
+        return
+    try:
+        msg = MIMEText(f"Nouvelle dépense:\n\nNom: {nom}\nMontant: {montant} Gdes")
+        msg['Subject'] = 'Nouvelle Dépense'
+        msg['From'] = TON_EMAIL
+        msg['To'] = TON_EMAIL
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(TON_EMAIL, MOT_DE_PASSE_APP)
+            server.send_message(msg)
+    except Exception as e:
+        print(f"Erreur email: {e}")
+
+@app.route('/', methods=['GET', 'POST'])
+def accueil():
+    if request.method == 'POST':
+        nom = request.form['nom']
+        montant = float(request.form['montant'])
+        date = datetime.now().strftime("%d/%m/%Y %H:%M")
+        nouvelle_depense = Depense(nom=nom, montant=montant, date=date)
+        db.session.add(nouvelle_depense)
+        db.session.commit()
+        envoyer_email_notif(nom, montant)
+        return redirect(url_for('accueil'))
+    depenses = Depense.query.order_by(Depense.id.desc()).all()
+    total = sum(d.montant for d in depenses)
+    return render_template('index.html', depenses=depenses, total=total)
+
+with app.app_context():
+    db.create_all() 
