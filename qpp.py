@@ -1,65 +1,59 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-import os
-import smtplib
-from email.mime.text import MIMEText
 from datetime import datetime
 
 app = Flask(__name__)
-
-# Config Base de données SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///depenses.db'
+app.config['SECRET_KEY'] = 'cle_secrete_banque_2026'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banque.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Récupère les infos depuis Render Environment
-TON_EMAIL = os.environ.get('TON_EMAIL')
-MOT_DE_PASSE_APP = os.environ.get('MOT_DE_PASSE_APP')
-
-# Modèle de la base de données
-class Depense(db.Model):
+class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100), nullable=False)
+    type = db.Column(db.String(20), nullable=False) # depot, retrait, pret, transfert_envoye, transfert_recu
+    compte = db.Column(db.String(50), nullable=False, default='Principal') # pour gérer plusieurs comptes plus tard
     montant = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(20), nullable=False)
 
-# Fonction pour envoyer l'email
-def envoyer_email_notif(nom, montant):
-    if not TON_EMAIL or not MOT_DE_PASSE_APP:
-        print("ERREUR: Variables TON_EMAIL ou MOT_DE_PASSE_APP non définies dans Render")
-        return
-    try:
-        msg = MIMEText(f"Nouvelle dépense enregistrée:\n\nNom: {nom}\nMontant: {montant} Gdes")
-        msg['Subject'] = 'Nouvelle Dépense - Hand to Hand Money'
-        msg['From'] = TON_EMAIL
-        msg['To'] = TON_EMAIL
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(TON_EMAIL, MOT_DE_PASSE_APP)
-            server.send_message(msg)
-        print("Email envoyé avec succès")
-    except Exception as e:
-        print(f"Erreur envoi email: {e}")
+def get_solde():
+    depots = db.session.query(db.func.sum(Transaction.montant)).filter(Transaction.type.in_(['depot', 'pret', 'transfert_recu'])).scalar() or 0
+    retraits = db.session.query(db.func.sum(Transaction.montant)).filter(Transaction.type.in_(['retrait', 'transfert_envoye'])).scalar() or 0
+    return depots - retraits
 
-# Route principale
 @app.route('/', methods=['GET', 'POST'])
 def accueil():
     if request.method == 'POST':
-        nom = request.form['nom']
+        type_op = request.form['type']
         montant = float(request.form['montant'])
+        description = request.form['description']
+        compte_dest = request.form.get('compte_dest', '')
         date = datetime.now().strftime("%d/%m/%Y %H:%M")
-       
-        nouvelle_depense = Depense(nom=nom, montant=montant, date=date)
-        db.session.add(nouvelle_depense)
-        db.session.commit()
+        solde_actuel = get_solde()
 
-        print(f"DEBUG: variables = {TON_EMAIL} / {MOT_DE_PASSE}")
-        envoyer_email_notif(nom, montant)
+        # Vérifs
+        if type_op in ['retrait', 'transfert_envoye'] and montant > solde_actuel:
+            flash("Solde insuffisant !", "danger")
+            return redirect(url_for('accueil'))
+
+        # Enregistrer la transaction
+        if type_op == 'transfert_envoye':
+            db.session.add(Transaction(type='transfert_envoye', montant=montant, description=f"Vers: {compte_dest} - {description}", date=date))
+            db.session.add(Transaction(type='transfert_recu', montant=montant, description=f"De: Principal - {description}", compte=compte_dest, date=date))
+        else:
+            db.session.add(Transaction(type=type_op, montant=montant, description=description, date=date))
+       
+        db.session.commit()
+        flash(f"Opération {type_op} de {montant} Gdes effectuée", "success")
         return redirect(url_for('accueil'))
    
-    depenses = Depense.query.order_by(Depense.id.desc()).all()
-    total = sum(d.montant for d in depenses)
-    return render_template('index.html', depenses=depenses, total=total)
+    transactions = Transaction.query.order_by(Transaction.id.desc()).limit(50).all()
+    solde = get_solde()
+   
+    return render_template('index.html', transactions=transactions, solde=solde)
 
-# Crée la base de données au démarrage
 with app.app_context():
-    db.create_all() 
+    db.create_all()
+
+if __name__ == '__main__':
+    app.run(debug=True) 
