@@ -1,70 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Hand to Hand Bank</title>
-    <style>
-        body { font-family: Arial; max-width: 800px; margin: 20px auto; }
-        .solde { font-size: 2em; color: green; }
-        .form { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
-        .danger { color: red; } .success { color: green; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { border: 1px solid #ddd; padding: 8px; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand to Hand Money</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Hand to Hand Money</h1>
-    <h2>Votre Solde: <span class="solde">{{ solde }} Gdes</span></h2>
+<body class="bg-gray-100">
+<div class="max-w-4xl mx-auto p-4">
 
+    <!-- HEADER -->
+    <div class="bg-white rounded-lg shadow p-4 mb-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold text-blue-600">Hand to Hand</h1>
+        <a href="{{ url_for('logout') }}" class="text-red-500 text-sm">Déconnexion</a>
+    </div>
+
+    <!-- SOLDE -->
+    <div class="bg-green-600 text-white rounded-lg shadow p-6 mb-4 text-center">
+        <p class="text-sm opacity-80">Solde Compte {{ comptes|selectattr('id','equalto',compte_actif_id)|map(attribute='nom')|first }}</p>
+        <p class="text-4xl font-bold">{{ "{:,.2f}".format(solde) }} <span class="text-2xl">Gdes</span></p>
+    </div>
+
+    <!-- CHOIX COMPTE -->
+    <form method="GET" class="bg-white rounded-lg shadow p-4 mb-4">
+        <label class="font-semibold">Choisir Compte</label>
+        <select name="compte_id" onchange="this.form.submit()" class="w-full mt-2 p-2 border rounded">
+            {% for c in comptes %}
+            <option value="{{ c.id }}" {% if c.id == compte_actif_id %}selected{% endif %}>{{ c.nom }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <p class="{{ category }}">{{ message }}</p>
-      {% endfor %}
+        {% for c,m in messages %}
+        <div class="p-3 mb-4 rounded {% if c=='success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{m}}</div>
+        {% endfor %}
     {% endwith %}
 
-    <div class="form">
-    <h3>Créer un nouveau compte</h3>
-    <form method="POST" action="{{ url_for('creer_compte') }}">
-        <input type="text" name="nom_compte" placeholder="Nom du compte: Business, Famille..." required>
-        <button type="submit">Créer</button>
-    </form>
-</div> 
-
-    <div class="form">
-        <h3>Nouvelle Opération</h3>
-        <form method="POST">
-            <select name="type" required>
-                <option value="depot">Dépôt</option>
-                <option value="retrait">Retrait</option>
-                <option value="pret">Prêt Reçu</option>
-                <option value="transfert_envoye">Transfert Envoyé</option>
-            </select>
-            <input type="number" step="0.01" name="montant" placeholder="Montant Gdes" required>
-            <input type="text" name="compte_dest" placeholder="Compte Destination si transfert">
-            <input type="text" name="description" placeholder="Description" required>
-            <button type="submit">Valider</button>
+    <!-- CREER COMPTE -->
+    <div class="bg-white rounded-lg shadow p-4 mb-4">
+        <h3 class="font-bold mb-2">+ Nouveau Compte</h3>
+        <form method="POST" action="{{ url_for('creer_compte') }}" class="flex gap-2">
+            <input type="text" name="nom_compte" placeholder="Business, Famille..." required class="flex-1 p-2 border rounded">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
         </form>
     </div>
 
-    <div style="margin:10px 0;">
-    <a href="{{ url_for('export_excel', compte_id=compte_actif_id) }}">
-        <button>📊 Télécharger Excel</button>
-    </a>
-    <a href="{{ url_for('export_pdf', compte_id=compte_actif_id) }}">
-        <button>📄 Télécharger PDF</button>
-    </a>
-</div> 
+    <!-- NOUVELLE OPERATION -->
+    <div class="bg-white rounded-lg shadow p-4 mb-4">
+        <h3 class="font-bold mb-2">Nouvelle Opération</h3>
+        <form method="POST" class="space-y-3">
+            <select name="type" required class="w-full p-2 border rounded">
+                <option value="depot">💰 Dépôt</option>
+                <option value="retrait">💸 Retrait</option>
+                <option value="pret">📈 Prêt Reçu</option>
+                <option value="transfert_envoye">🔄 Transfert Interne</option>
+            </select>
+            <input type="number" step="0.01" name="montant" placeholder="Montant Gdes" required class="w-full p-2 border rounded">
+            <input type="text" name="compte_dest" placeholder="Compte destination si transfert" class="w-full p-2 border rounded">
+            <input type="text" name="description" placeholder="Description" required class="w-full p-2 border rounded">
+            <button type="submit" class="w-full bg-green-600 text-white py-3 rounded font-bold">Valider</button>
+        </form>
+    </div>
 
-    <h3>Historique</h3>
-    <table>
-        <tr><th>Date</th><th>Type</th><th>Montant</th><th>Description</th></tr>
-        {% for t in transactions %}
-        <tr>
-            <td>{{ t.date }}</td>
-            <td>{{ t.type }}</td>
-            <td>{{ t.montant }} Gdes</td>
-            <td>{{ t.description }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- EXPORT -->
+    <div class="bg-white rounded-lg shadow p-4 mb-4 flex gap-2">
+        <a href="{{ url_for('export_excel', compte_id=compte_actif_id) }}" class="flex-1 text-center bg-blue-500 text-white py-2 rounded">📊 Excel</a>
+        <a href="{{ url_for('export_pdf', compte_id=compte_actif_id) }}" class="flex-1 text-center bg-red-500 text-white py-2 rounded">📄 PDF</a>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="font-bold mb-3">Historique</h3>
+        <div class="space-y-2">
+            {% for t in transactions %}
+            <div class="border-b pb-2">
+                <div class="flex justify-between">
+                    <span class="font-semibold">{{ t.type }}</span>
+                    <span class="{% if t.type in ['depot','pret','transfert_recu'] %}text-green-600{% else %}text-red-600{% endif %} font-bold">
+                        {{ "{:,.2f}".format(t.montant) }} Gdes
+                    </span>
+                </div>
+                <p class="text-sm text-gray-500">{{ t.date }}</p>
+                <p class="text-sm">{{ t.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
 </body>
 </html> 
