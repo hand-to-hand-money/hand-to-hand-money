@@ -42,21 +42,45 @@ def get_solde(compte_id):
     retraits = db.session.query(db.func.sum(Transaction.montant)).filter(Transaction.compte_id==compte_id, Transaction.type.in_(['retrait', 'transfert_envoye'])).scalar() or 0
     return depots - retraits
 
+import secrets # mets le en haut avec les autres imports
+
+def generer_numero_compte():
+    return "HTH" + str(secrets.randbelow(90000000) + 10000000) # Ex: HTH12345678
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        if User.query.filter_by(username=request.form['username']).first():
+        username = request.form['username']
+        password = request.form['password']
+       
+        if User.query.filter_by(username=username).first():
             flash("Nom d'utilisateur déjà pris", "danger")
             return redirect(url_for('register'))
-        user = User(username=request.form['username'], password=generate_password_hash(request.form['password']))
-        db.session.add(user)
+       
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
         db.session.commit()
-        db.session.add(Compte(nom='Principal', user_id=user.id))
-        db.session.add(Compte(nom='Epargne', user_id=user.id))
+
+        # ICI C'EST LA CREATION AUTO DES 2 COMPTES
+        # AVANT C'ETAIT JUSTE: db.session.add(Compte(nom='Principal', user_id=new_user.id))
+        # MAINTENANT ON MET ÇA:
+        for nom in ['Principal', 'Epargne']:
+            num = generer_numero_compte()
+            pwd_hash = generate_password_hash("1234") # Mot de passe par défaut pour chaque compte: 1234
+            db.session.add(Compte(
+                nom=nom,
+                nom_proprietaire=username, # Le nom du user devient le propriétaire
+                numero_compte=num,
+                password_compte=pwd_hash,
+                user_id=new_user.id
+            ))
+       
         db.session.commit()
-        flash("Compte créé! Connectez-vous", "success")
+        flash("Compte créé! Mot de passe par défaut des comptes: 1234", "success")
         return redirect(url_for('login'))
-    return render_template('register.html')
+       
+    return render_template('register.html') 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
