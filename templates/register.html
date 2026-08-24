@@ -1,19 +1,13 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="card shadow">
-      <div class="card-body">
-        <h3 class="card-title text-center">Créer un compte</h3>
-        <form method="POST">
-          <div class="mb-3"><label>Nom complet</label><input type="text" name="nom" class="form-control" required></div>
-          <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
-          <div class="mb-3"><label>Mot de passe</label><input type="password" name="mdp" class="form-control" required></div>
-          <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
-        </form>
-        <p class="text-center mt-3">Déjà un compte? <a href="/login">Se connecter</a></p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %} 
+<!DOCTYPE html>
+<html><head><title>Inscription</title>
+<style>body{font-family:Arial; max-width:400px; margin:50px auto; padding:20px; border:1px solid #ccc;}</style>
+</head><body>
+<h2>Inscription</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}{% for c,m in messages %}<p class="{{c}}">{{m}}</p>{% endfor %}{% endwith %}
+<form method="POST">
+    <input type="text" name="username" placeholder="Nom d'utilisateur" required style="width:100%; padding:8px; margin:5px 0;">
+    <input type="password" name="password" placeholder="Mot de passe" required style="width:100%; padding:8px; margin:5px 0;">
+    <button type="submit" style="width:100%; padding:10px;">Créer le compte</button>
+</form>
+<p>Déjà un compte? <a href="{{ url_for('login') }}">Se connecter</a></p>
+</body></html> 
