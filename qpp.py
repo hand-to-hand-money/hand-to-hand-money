@@ -103,3 +103,14 @@ def accueil():
 
 with app.app_context():
     db.create_all() 
+@app.route('/creer_compte', methods=['POST'])
+def creer_compte():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    nom_compte = request.form['nom_compte']
+    if Compte.query.filter_by(nom=nom_compte, user_id=session['user_id']).first():
+        flash("Ce nom de compte existe déjà", "danger")
+    else:
+        db.session.add(Compte(nom=nom_compte, user_id=session['user_id']))
+        db.session.commit()
+        flash(f"Compte {nom_compte} créé!", "success")
+    return redirect(url_for('accueil')) 
