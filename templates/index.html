@@ -45,6 +45,15 @@
         </form>
     </div>
 
+    <div style="margin:10px 0;">
+    <a href="{{ url_for('export_excel', compte_id=compte_actif_id) }}">
+        <button>📊 Télécharger Excel</button>
+    </a>
+    <a href="{{ url_for('export_pdf', compte_id=compte_actif_id) }}">
+        <button>📄 Télécharger PDF</button>
+    </a>
+</div> 
+
     <h3>Historique</h3>
     <table>
         <tr><th>Date</th><th>Type</th><th>Montant</th><th>Description</th></tr>
