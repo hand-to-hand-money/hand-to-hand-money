@@ -119,8 +119,58 @@ def creer_compte():
         db.session.commit()
         flash(f"Compte {nom_compte} créé!", "success")
     return redirect(url_for('accueil')) 
-import pandas as pd
-from flask import make_response
-from io import BytesIO
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4 
+@app.route('/export_excel')
+def export_excel():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    compte_id = request.args.get('compte_id')
+    transactions = Transaction.query.filter_by(compte_id=compte_id).all()
+    compte = Compte.query.get(compte_id)
+
+    data = [{
+        "Date": t.date,
+        "Type": t.type,
+        "Montant": t.montant,
+        "Description": t.description
+    } for t in transactions]
+
+    df = pd.DataFrame(data)
+    output = BytesIO()
+    df.to_excel(output, index=False, sheet_name=compte.nom)
+    output.seek(0)
+   
+    response = make_response(output.read())
+    response.headers["Content-Disposition"] = f"attachment; filename=historique_{compte.nom}.xlsx"
+    response.headers["Content-type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    return response
+
+@app.route('/export_pdf')
+def export_pdf():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    compte_id = request.args.get('compte_id')
+    transactions = Transaction.query.filter_by(compte_id=compte_id).all()
+    compte = Compte.query.get(compte_id)
+    solde = get_solde(compte_id)
+
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(50, 800, f"Relevé - Compte {compte.nom}")
+    p.setFont("Helvetica", 12)
+    p.drawString(50, 780, f"Solde Actuel: {solde:,.2f} Gdes")
+    p.drawString(50, 760, f"Date: {datetime.now().strftime('%d/%m/%Y')}")
+   
+    y = 720
+    p.drawString(50, y, "Date"); p.drawString(150, y, "Type"); p.drawString(250, y, "Montant"); p.drawString(350, y, "Description")
+    y -= 20
+    for t in transactions:
+        p.drawString(50, y, t.date)
+        p.drawString(150, y, t.type)
+        p.drawString(250, y, f"{t.montant:,.2f} Gdes")
+        p.drawString(350, y, t.description[:30])
+        y -= 20
+        if y < 50: p.showPage(); y = 800
+   
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return response.send_file(buffer, as_attachment=True, download_name=f"releve_{compte.nom}.pdf", mimetype='application/pdf') 
