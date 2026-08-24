@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cle_secrete_banque_2026_ultra'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banque.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -15,7 +16,7 @@ class User(db.Model):
 
 class Compte(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(50), nullable=False) # Principal, Epargne
+    nom = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 class Transaction(db.Model):
@@ -34,11 +35,14 @@ def get_solde(compte_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        if User.query.filter_by(username=request.form['username']).first():
+            flash("Nom d'utilisateur déjà pris", "danger")
+            return redirect(url_for('register'))
         user = User(username=request.form['username'], password=generate_password_hash(request.form['password']))
         db.session.add(user)
         db.session.commit()
-        # Créer compte Principal par défaut
         db.session.add(Compte(nom='Principal', user_id=user.id))
+        db.session.add(Compte(nom='Epargne', user_id=user.id))
         db.session.commit()
         flash("Compte créé! Connectez-vous", "success")
         return redirect(url_for('login'))
@@ -57,6 +61,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
+    flash("Déconnecté", "success")
     return redirect(url_for('login'))
 
 @app.route('/', methods=['GET', 'POST'])
@@ -64,15 +69,37 @@ def accueil():
     if 'user_id' not in session: return redirect(url_for('login'))
 
     comptes = Compte.query.filter_by(user_id=session['user_id']).all()
-    compte_actif_id = request.args.get('compte_id', comptes[0].id if comptes else None)
+    compte_actif_id = int(request.args.get('compte_id', comptes[0].id if comptes else 0))
 
     if request.method == 'POST':
-        #... même logique que avant mais avec compte_id...
-        pass # Je te donne le code complet si tu veux
+        type_op = request.form['type']
+        montant = float(request.form['montant'])
+        description = request.form['description']
+        compte_dest_nom = request.form.get('compte_dest', '')
+        date = datetime.now().strftime("%d/%m/%Y %H:%M")
+        solde_actuel = get_solde(compte_actif_id)
+
+        if type_op in ['retrait', 'transfert_envoye'] and montant > solde_actuel:
+            flash("Solde insuffisant!", "danger")
+            return redirect(url_for('accueil', compte_id=compte_actif_id))
+
+        if type_op == 'transfert_envoye':
+            compte_dest = Compte.query.filter_by(nom=compte_dest_nom, user_id=session['user_id']).first()
+            if not compte_dest:
+                flash("Compte destination introuvable", "danger")
+                return redirect(url_for('accueil', compte_id=compte_actif_id))
+            db.session.add(Transaction(type='transfert_envoye', compte_id=compte_actif_id, montant=montant, description=f"Vers: {compte_dest_nom} - {description}", date=date))
+            db.session.add(Transaction(type='transfert_recu', compte_id=compte_dest.id, montant=montant, description=f"De: {comptes[0].nom} - {description}", date=date))
+        else:
+            db.session.add(Transaction(type=type_op, compte_id=compte_actif_id, montant=montant, description=description, date=date))
+
+        db.session.commit()
+        flash(f"Opération {type_op} de {montant} Gdes effectuée", "success")
+        return redirect(url_for('accueil', compte_id=compte_actif_id))
 
     solde = get_solde(compte_actif_id)
-    transactions = Transaction.query.filter_by(compte_id=compte_actif_id).order_by(Transaction.id.desc()).all()
-    return render_template('index.html', comptes=comptes, compte_actif_id=int(compte_actif_id), solde=solde, transactions=transactions)
+    transactions = Transaction.query.filter_by(compte_id=compte_actif_id).order_by(Transaction.id.desc()).limit(50).all()
+    return render_template('index.html', comptes=comptes, compte_actif_id=compte_actif_id, solde=solde, transactions=transactions)
 
 with app.app_context():
     db.create_all() 
