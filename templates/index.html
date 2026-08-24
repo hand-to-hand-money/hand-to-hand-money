@@ -21,33 +21,27 @@
         <p class="text-4xl font-bold">{{ "{:,.2f}".format(solde) }} <span class="text-2xl">Gdes</span></p>
     </div>
 
-    <!-- CHOIX COMPTE -->
-    <form method="GET" class="bg-white rounded-lg shadow p-4 mb-4">
-        <label class="font-semibold">Choisir Compte</label>
-        <select name="compte_id" onchange="this.form.submit()" class="w-full mt-2 p-2 border rounded">
-            {% for c in comptes %}
-            <option value="{{ c.id }}" {% if c.id == compte_actif_id %}selected{% endif %}>{{ c.nom }}</option>
-            {% endfor %}
-        </select>
+   
+   <!-- INFOS COMPTE ACTIF -->
+<div class="bg-white rounded-lg shadow p-4 mb-4">
+    {% set compte_actif = comptes|selectattr('id','equalto',compte_actif_id)|first %}
+    <p class="text-sm text-gray-500">Compte: <span class="font-bold">{{ compte_actif.nom }}</span></p>
+    <p class="text-sm text-gray-500">Propriétaire: <span class="font-bold">{{ compte_actif.nom_proprietaire }}</span></p>
+    <p class="text-sm text-gray-500">N°: <span class="font-bold text-blue-600">{{ compte_actif.numero_compte }}</span></p>
+</div>
+
+<!-- CREER COMPTE -->
+<div class="bg-white rounded-lg shadow p-4 mb-4">
+    <h3 class="font-bold mb-2">+ Nouveau Compte</h3>
+    <form method="POST" action="{{ url_for('creer_compte') }}" class="space-y-2">
+        <input type="text" name="nom_compte" placeholder="Nom du compte" required class="w-full p-2 border rounded">
+        <input type="text" name="nom_proprietaire" placeholder="Nom du Propriétaire" required class="w-full p-2 border rounded">
+        <input type="password" name="password_compte" placeholder="Mot de passe du compte" required class="w-full p-2 border rounded">
+        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
     </form>
-
-    <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for c,m in messages %}
-        <div class="p-3 mb-4 rounded {% if c=='success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{m}}</div>
-        {% endfor %}
-    {% endwith %}
-
-    <!-- CREER COMPTE -->
-    <div class="bg-white rounded-lg shadow p-4 mb-4">
-        <h3 class="font-bold mb-2">+ Nouveau Compte</h3>
-        <form method="POST" action="{{ url_for('creer_compte') }}" class="flex gap-2">
-            <input type="text" name="nom_compte" placeholder="Business, Famille..." required class="flex-1 p-2 border rounded">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
-        </form>
-    </div>
-
-    <!-- NOUVELLE OPERATION -->
+</div> 
+ <!-- NOUVELLE OPERATION -->
+    <input type="password" name="password_compte" placeholder="Mot de passe du compte source" required class="w-full p-2 border rounded"> 
     <div class="bg-white rounded-lg shadow p-4 mb-4">
         <h3 class="font-bold mb-2">Nouvelle Opération</h3>
         <form method="POST" class="space-y-3">
