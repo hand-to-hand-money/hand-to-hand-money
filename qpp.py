@@ -1,3 +1,8 @@
+import pandas as pd
+from flask import make_response
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4 
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -114,3 +119,8 @@ def creer_compte():
         db.session.commit()
         flash(f"Compte {nom_compte} créé!", "success")
     return redirect(url_for('accueil')) 
+import pandas as pd
+from flask import make_response
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4 
