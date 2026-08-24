@@ -2,3 +2,9 @@ Flask==3.0.3
 gunicorn==21.2.0
 Flask-SQLAlchemy==3.1.1
 bcrypt==4.1.3
+Flask
+Flask-SQLAlchemy
+Werkzeug
+pandas
+openpyxl
+reportlab 
