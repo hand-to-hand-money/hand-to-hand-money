@@ -19,10 +19,15 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
+import secrets # AJOUTE CET IMPORT EN HAUT
+
 class Compte(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    nom = db.Column(db.String(50), nullable=False) # Ex: Epargne, Business
+    nom_proprietaire = db.Column(db.String(100), nullable=False)
+    numero_compte = db.Column(db.String(20), unique=True, nullable=False)
+    password_compte = db.Column(db.String(200), nullable=False) # hash du mdp
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) 
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
