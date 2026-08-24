@@ -51,7 +51,8 @@ def accueil():
         nouvelle_depense = Depense(nom=nom, montant=montant, date=date)
         db.session.add(nouvelle_depense)
         db.session.commit()
-       
+
+        print(f"DEBUG: variables = {TON_EMAIL} / {MOT_DE_PASSE}")
         envoyer_email_notif(nom, montant)
         return redirect(url_for('accueil'))
    
