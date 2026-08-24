@@ -70,7 +70,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True) 
- nom = db.Column(db.String(100), nullable=False)
+    nom = db.Column(db.String(100), nullable=False)
     montant = db.Column(db.Float, nullable=False)
     date = db.Column(db.String(20), nullable=False)
 
