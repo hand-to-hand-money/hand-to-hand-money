@@ -59,3 +59,7 @@ def admin():
     return render_template('admin.html', users=users, comptes=comptes, transactions=transactions)
 
 # ... colle ici toutes tes autres routes: login, register, accueil, exporter_pdf etc en version Python correcte 
+with app.app_context():
+        db.drop_all()  # <-- CA SUPPRIME L'ANCIENNE DB
+        db.create_all() # <-- CA RECREE AVEC LES NOUVELLES COLONNES
+        print("Base de données recréée!") 
