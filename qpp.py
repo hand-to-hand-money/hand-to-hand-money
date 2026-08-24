@@ -137,16 +137,28 @@ def accueil():
 
 with app.app_context():
     db.create_all() 
+    
 @app.route('/creer_compte', methods=['POST'])
 def creer_compte():
     if 'user_id' not in session: return redirect(url_for('login'))
     nom_compte = request.form['nom_compte']
+    nom_prop = request.form['nom_proprietaire']
+    pwd_compte = request.form['password_compte']
+   
     if Compte.query.filter_by(nom=nom_compte, user_id=session['user_id']).first():
         flash("Ce nom de compte existe déjà", "danger")
     else:
-        db.session.add(Compte(nom=nom_compte, user_id=session['user_id']))
+        num = generer_numero_compte()
+        pwd_hash = generate_password_hash(pwd_compte)
+        db.session.add(Compte(
+            nom=nom_compte,
+            nom_proprietaire=nom_prop,
+            numero_compte=num,
+            password_compte=pwd_hash,
+            user_id=session['user_id']
+        ))
         db.session.commit()
-        flash(f"Compte {nom_compte} créé!", "success")
+        flash(f"Compte {nom_compte} N°{num} créé!", "success")
     return redirect(url_for('accueil')) 
 @app.route('/export_excel')
 def export_excel():
