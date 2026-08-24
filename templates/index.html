@@ -1,32 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hand-to-Hand Money</title>
+    <title>Hand to Hand Bank</title>
     <style>
-        body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; }
-        form { background: #f0f0f0; padding: 15px; border-radius: 8px; }
-        input { padding: 8px; margin: 5px; }
-        button { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 5px; }
-        .depense { border-bottom: 1px solid #ccc; padding: 10px 0; }
-        .total { font-size: 20px; font-weight: bold; color: green; }
+        body { font-family: Arial; max-width: 800px; margin: 20px auto; }
+        .solde { font-size: 2em; color: green; }
+        .form { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .danger { color: red; } .success { color: green; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { border: 1px solid #ddd; padding: 8px; }
     </style>
 </head>
 <body>
-    <h1>Gestion des Dépenses</h1>
-   
-    <form method="POST">
-        <input type="text" name="nom" placeholder="Nom de la dépense" required>
-        <input type="number" step="0.01" name="montant" placeholder="Montant" required>
-        <button type="submit">Ajouter</button>
-    </form>
+    <h1>Hand to Hand Money</h1>
+    <h2>Votre Solde: <span class="solde">{{ solde }} Gdes</span></h2>
 
-    <h2>Total: <span class="total">{{ total }} Gdes</span></h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <p class="{{ category }}">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
 
-    <h3>Historique:</h3>
-    {% for d in depenses %}
-    <div class="depense">
-        <b>{{ d.nom }}</b> - {{ d.montant }} Gdes - <i>{{ d.date }}</i>
+    <div class="form">
+        <h3>Nouvelle Opération</h3>
+        <form method="POST">
+            <select name="type" required>
+                <option value="depot">Dépôt</option>
+                <option value="retrait">Retrait</option>
+                <option value="pret">Prêt Reçu</option>
+                <option value="transfert_envoye">Transfert Envoyé</option>
+            </select>
+            <input type="number" step="0.01" name="montant" placeholder="Montant Gdes" required>
+            <input type="text" name="compte_dest" placeholder="Compte Destination si transfert">
+            <input type="text" name="description" placeholder="Description" required>
+            <button type="submit">Valider</button>
+        </form>
     </div>
-    {% endfor %}
+
+    <h3>Historique</h3>
+    <table>
+        <tr><th>Date</th><th>Type</th><th>Montant</th><th>Description</th></tr>
+        {% for t in transactions %}
+        <tr>
+            <td>{{ t.date }}</td>
+            <td>{{ t.type }}</td>
+            <td>{{ t.montant }} Gdes</td>
+            <td>{{ t.description }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html> 
