@@ -95,9 +95,18 @@ def logout():
 @app.route('/accueil')
 @login_required
 def accueil():
-    comptes = Compte.query.filter_by(user_id=session['user_id']).all()
-    solde_total = sum([calculer_solde(c.id) for c in comptes])
-    return render_template('accueil.html', comptes=comptes, solde_total=solde_total, calculer_solde=calculer_solde) 
+    comptes = Compte.query.filter_by(user_id=current_user.id).all()
+   
+    solde_total = 0
+    soldes = {} # dictionnaire pour stocker les soldes
+    for compte in comptes:
+        soldes[compte.id] = calculer_solde(compte.id)
+        solde_total += soldes[compte.id]
+
+    return render_template('accueil.html',
+                           comptes=comptes,
+                           solde_total=solde_total,
+                           soldes=soldes) # on passe le dict au lieu de la fonction 
 # <-- AJOUTE calculer_solde ICI
 @app.route('/creer_compte', methods=['GET', 'POST'])
 @login_required
