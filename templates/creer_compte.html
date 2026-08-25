@@ -1,1 +1,11 @@
-
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Nouveau Compte</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-4">
+<div class="bg-white p-6 rounded-2xl shadow-lg max-w-md mx-auto mt-10">
+<h1 class="text-xl font-bold mb-4">Créer un Nouveau Compte</h1>
+<form method="POST">
+<label class="text-sm font-bold">Nom du compte</label>
+<input name="nom" placeholder="Ex: Compte Épargne" class="w-full p-3 border rounded-lg mb-4" required>
+<button class="w-full bg-[#F05A28] text-white py-3 rounded-lg font-bold">Créer</button>
+</form>
+<a href="{{ url_for('accueil') }}" class="block text-center mt-4 text-[#004AAD]">Retour</a>
+</div></body></html> 
