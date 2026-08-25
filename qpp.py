@@ -195,6 +195,7 @@ def admin():
 
 # --- CREATION DB ---
 with app.app_context():
+    db.drop_all()  # <-- AJOUTE CETTE LIGNE
     db.create_all()
     # Créer admin par défaut si n'existe pas
     if not User.query.filter_by(username='admin').first():
