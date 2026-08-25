@@ -194,11 +194,7 @@ def admin():
     return render_template('admin.html', users=users)
 
 # --- CREATION DB ---
-with app.app_context():
-    db.drop_all()  # <-- AJOUTE CETTE LIGNE
-    db.create_all()
-    # Créer admin par défaut si n'existe pas
-    if not User.query.filter_by(username='admin').first():
-        admin = User(username='admin', password=generate_password_hash('admin123'), role='admin')
-        db.session.add(admin)
-        db.session.commit() 
+ with app.app_context():
+        db.create_all()
+        # Créer admin par défaut si n'existe pas
+        ... 
