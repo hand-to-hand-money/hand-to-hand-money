@@ -1,1 +1,13 @@
-
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ type }}</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-4">
+<div class="bg-white p-6 rounded-2xl shadow-lg max-w-md mx-auto mt-10">
+<h1 class="text-xl font-bold mb-4">{{ type }}</h1>
+<form method="POST">
+<label class="text-sm font-bold">Montant en Gdes</label>
+<input name="montant" type="number" step="0.01" placeholder="1000.00" class="w-full p-3 border rounded-lg mb-4" required>
+<label class="text-sm font-bold">Description</label>
+<input name="description" placeholder="Ex: Dépôt initial" class="w-full p-3 border rounded-lg mb-4">
+<button class="w-full bg-[#004AAD] text-white py-3 rounded-lg font-bold">Confirmer {{ type }}</button>
+</form>
+<a href="{{ url_for('accueil') }}" class="block text-center mt-4 text-gray-500">Annuler</a>
+</div></body></html> 
