@@ -194,7 +194,7 @@ def admin():
     return render_template('admin.html', users=users)
 
 # --- CREATION DB ---
- with app.app_context():
+with app.app_context():
         db.create_all()
         # Créer admin par défaut si n'existe pas
         ... 
