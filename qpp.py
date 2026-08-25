@@ -98,8 +98,8 @@ def logout():
 def accueil():
     comptes = Compte.query.filter_by(user_id=session['user_id']).all()
     solde_total = sum([calculer_solde(c.id) for c in comptes])
-    return render_template('accueil.html', comptes=comptes, solde_total=solde_total, calculer_solde=calculer_solde)
-
+    return render_template('accueil.html', comptes=comptes, solde_total=solde_total, calculer_solde=calculer_solde) 
+# <-- AJOUTE calculer_solde ICI
 @app.route('/creer_compte', methods=['GET', 'POST'])
 @login_required
 def creer_compte():
