@@ -56,10 +56,9 @@ def admin_required(f):
 def calculer_solde(compte_id):
     depots = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_id=compte_id, type='depot').scalar() or 0
     retraits = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_id=compte_id, type='retrait').scalar() or 0
-    transferts_out = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_id=compte_id, type='transfert').scalar() or 0
-    transferts_in = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_dest_id=compte_id, type='transfert').scalar() or 0
-    return depots - retraits - transferts_out + transferts_in
-
+    transferts_sortants = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_id=compte_id, type='transfert_sortant').scalar() or 0
+    transferts_entrants = db.session.query(db.func.sum(Transaction.montant)).filter_by(compte_id=compte_id, type='transfert_entrant').scalar() or 0
+    return depots - retraits - transferts_sortants + transferts_entrants 
 # --- ROUTES AUTH ---
 @app.route('/')
 def index():
