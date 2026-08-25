@@ -1,1 +1,13 @@
-
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Historique</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-4">
+<div class="bg-white p-6 rounded-2xl shadow-lg max-w-2xl mx-auto mt-10">
+<h1 class="text-xl font-bold mb-4">Historique des Transactions</h1>
+<table class="w-full text-sm">
+<tr class="bg-gray-200"><th class="p-2 text-left">Date</th><th>Type</th><th>Montant</th><th>Description</th></tr>
+{% for t in transactions %}
+<tr class="border-b"><td class="p-2">{{ t.date.strftime('%d/%m/%Y') }}</td>
+<td>{{ t.type }}</td><td class="font-bold">{{ "{:,.2f}".format(t.montant) }} Gdes</td><td>{{ t.description }}</td></tr>
+{% endfor %}
+</table>
+<a href="{{ url_for('accueil') }}" class="block text-center mt-4 text-[#004AAD]">Retour</a>
+</div></body></html> 
