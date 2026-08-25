@@ -1,18 +1,18 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hand to Hand Money</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-100 min-h-screen">
-<div class="relative bg-[#004AAD] text-white p-4 pb-16 rounded-b-3xl overflow-hidden">
-<img src="https://i.imgur.com/0nXuAZL.png" class="absolute right-0 top-0 h-44 opacity-95">
-<div class="relative z-10"><div class="flex justify-between"><h1 class="text-xl font-bold">Hand to Hand</h1><a href="{{ url_for('logout') }}" class="text-sm bg-white/20 px-3 py-1 rounded-full">Déconnexion</a></div>
-<div class="mt-6 bg-white text-[#004AAD] rounded-2xl p-4 shadow-lg"><p class="text-sm">Solde Total</p><p class="text-3xl font-bold">{{ "{:,.2f}".format(solde_total) }} <span class="text-lg">Gdes</span></p></div></div></div>
-<div class="p-4 -mt-8"><div class="grid grid-cols-2 gap-4">
-<a href="{{ url_for('creer_compte') }}" class="bg-white rounded-2xl p-4 shadow text-center"><div class="bg-green-100 p-3 rounded-full mb-2 mx-auto w-fit">💰</div><p class="font-bold">Nouveau Compte</p></a>
-</div></div>
-<div class="p-4"><h2 class="font-bold text-lg mb-3">Mes Comptes</h2>
-{% for compte in comptes %}<div class="bg-white rounded-2xl p-4 shadow mb-3"><p class="font-bold">{{ compte.nom }}</p><p class="text-sm text-gray-500">{{ compte.numero_compte }}</p>
-<p class="font-bold text-[#004AAD] mt-2">{{ "{:,.2f}".format(calculer_solde(compte.id)) }} Gdes</p>
-<div class="flex gap-2 mt-2"><a href="{{ url_for('depot', compte_id=compte.id) }}" class="text-xs bg-green-500 text-white px-3 py-1 rounded">Dépôt</a>
-<a href="{{ url_for('retrait', compte_id=compte.id) }}" class="text-xs bg-red-500 text-white px-3 py-1 rounded">Retrait</a>
-<a href="{{ url_for('exporter_pdf', compte_id=compte.id) }}" class="text-xs bg-blue-500 text-white px-3 py-1 rounded">PDF</a></div></div>{% endfor %}
-<a href="{{ url_for('transfert') }}" class="w-full bg-[#F05A28] text-white py-3 rounded-2xl font-bold block text-center mt-4">Transférer</a></div>
-<a href="https://wa.me/18098933112" target="_blank" class="fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.513L.057 24z"/></svg></a>
-</body></html> 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold">Accueil</h1>
+        <p>Solde Total: {{ solde_total }} FCFA</p>
+        {% for compte in comptes %}
+            <div class="bg-white p-4 rounded shadow mt-2">
+                <p>{{ compte.nom }} - {{ calculer_solde(compte.id) }} FCFA</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html> 
