@@ -1,1 +1,18 @@
-
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Transfert</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-4">
+<div class="bg-white p-6 rounded-2xl shadow-lg max-w-md mx-auto mt-10">
+<h1 class="text-xl font-bold mb-4">Faire un Transfert</h1>
+{% with messages = get_flashed_messages() %}{% if messages %}<p class="text-red-500 text-sm mb-4">{{ messages[0] }}</p>{% endif %}{% endwith %}
+<form method="POST">
+<label class="text-sm font-bold">De quel compte</label>
+<select name="compte_src" class="w-full p-3 border rounded-lg mb-4">
+{% for c in comptes %}<option value="{{ c.id }}">{{ c.nom }} - {{ "{:,.2f}".format(calculer_solde(c.id)) }} Gdes</option>{% endfor %}
+</select>
+<label class="text-sm font-bold">Numéro du compte destinataire</label>
+<input name="compte_dest" placeholder="HHM123456" class="w-full p-3 border rounded-lg mb-4" required>
+<label class="text-sm font-bold">Montant en Gdes</label>
+<input name="montant" type="number" step="0.01" class="w-full p-3 border rounded-lg mb-4" required>
+<button class="w-full bg-[#F05A28] text-white py-3 rounded-lg font-bold">Envoyer</button>
+</form>
+<a href="{{ url_for('accueil') }}" class="block text-center mt-4 text-gray-500">Annuler</a>
+</div></body></html> 
