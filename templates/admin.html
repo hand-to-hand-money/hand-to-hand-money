@@ -1,23 +1,10 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Panneau Admin</h2>
-<h4>Clients</h4>
-<table class="table table-sm">
-  <thead><tr><th>Nom</th><th>Email</th><th>Compte</th><th>Solde</th></tr></thead>
-  <tbody>
-    {% for client, compte in clients %}
-    <tr><td>{{ client.nom }}</td><td>{{ client.email }}</td><td>{{ compte.numero }}</td><td>{{ "{:,.0f}".format(compte.solde) }}</td></tr>
-    {% endfor %}
-  </tbody>
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-4">
+<div class="bg-white p-6 rounded-2xl shadow-lg max-w-2xl mx-auto mt-10">
+<h1 class="text-xl font-bold mb-4">Panneau Admin</h1>
+<table class="w-full text-sm">
+<tr class="bg-gray-200"><th class="p-2 text-left">ID</th><th>Username</th><th>Rôle</th></tr>
+{% for u in users %}<tr class="border-b"><td class="p-2">{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.role }}</td></tr>{% endfor %}
 </table>
-
-<h4>Demandes de Prêt en attente</h4>
-<table class="table table-sm">
-  <thead><tr><th>Client ID</th><th>Montant</th><th>Mensualité</th></tr></thead>
-  <tbody>
-    {% for p in prets %}
-    <tr><td>{{ p.client_id }}</td><td>{{ "{:,.0f}".format(p.montant) }}</td><td>{{ "{:,.0f}".format(p.mensualite) }}</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %} 
+<a href="{{ url_for('accueil') }}" class="block text-center mt-4 text-[#004AAD]">Retour Accueil</a>
+</div></body></html> 
