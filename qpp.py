@@ -195,7 +195,6 @@ def admin():
 
 # --- CREATION DB ---
 with app.app_context():
-    db.drop_all()  # SUPPRIME L'ANCIENNE DB
     db.create_all() # RECRÉE AVEC LES NOUVELLES COLONNES
     # Créer admin par défaut
     if not User.query.filter_by(username='admin').first():
