@@ -193,6 +193,15 @@ def exporter_pdf(compte_id):
     buffer.seek(0)
     return send_file(buffer, as_attachment=True, download_name=f"releve_{compte.numero_compte}.pdf")
 
+with app.app_context():
+    db.create_all() # SEULEMENT create_all, plus de drop_all
+   
+    # Créer admin seulement s'il n'existe pas
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', password=generate_password_hash('admin123'), role='admin')
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin créé: admin / admin123") 
 # --- ADMIN ---
 @app.route('/admin')
 @login_required
@@ -203,10 +212,11 @@ def admin():
 
 # --- CREATION DB ---
 with app.app_context():
-    db.create_all() # RECRÉE AVEC LES NOUVELLES COLONNES
-    # Créer admin par défaut
+    db.create_all() # SEULEMENT create_all, plus de drop_all
+   
+    # Créer admin seulement s'il n'existe pas
     if not User.query.filter_by(username='admin').first():
         admin = User(username='admin', password=generate_password_hash('admin123'), role='admin')
         db.session.add(admin)
-        db.session.commit() 
-
+        db.session.commit()
+        print("Admin créé: admin / admin123") 
