@@ -210,9 +210,20 @@ def admin():
     users = User.query.all()
     return render_template('admin.html', users=users)
 
-# --- CREATION DB ---
+# ===== RESET DB 1 SEULE FOIS =====
+import os
+if os.path.exists("instance/app.db"):
+    os.remove("instance/app.db") # Supprime l'ancienne DB cassée
+    print("Ancienne DB supprimée")
+
+# ===== CREATION DB PROPRE =====
 with app.app_context():
-    db.create_all() # SEULEMENT create_all, plus de drop_all
+    db.create_all()
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', password=generate_password_hash('admin123'), role='admin')
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin créé: admin / admin123") 
    
     # Créer admin seulement s'il n'existe pas
     if not User.query.filter_by(username='admin').first():
