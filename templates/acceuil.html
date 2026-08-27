@@ -1,28 +1,26 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head><title>Accueil</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-100">
-<div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-3xl font-bold">Bonjour {{ current_user.username }}</h1>
-    <div class="bg-blue-500 text-white p-4 rounded-lg mt-4">
-        <p>Solde Total</p>
-        <p class="text-2xl font-bold">{{ "%.2f"|format(solde_total) }} FCFA</p>
+<html lang="fr"><head><title>Accueil</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Bonjour {{ current_user.username }}</h1>
+        <a href="{{ url_for('logout') }}" class="text-red-500">Déconnexion</a>
     </div>
+    <div class="bg-blue-500 text-white p-4 rounded-lg mt-4">
+        <p>Solde Total</p><p class="text-2xl font-bold">{{ "%.2f"|format(solde_total) }} FCFA</p>
+    </div>
+    <a href="{{ url_for('ajouter_compte') }}" class="bg-green-500 text-white px-4 py-2 rounded mt-4 inline-block">+ Ajouter Compte</a>
 
     {% if comptes %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {% for compte in comptes %}
             <div class="bg-white p-4 rounded-lg shadow">
-                <h2 class="font-bold">{{ compte.nom }}</h2>
-                <p>Solde: {{ "%.2f"|format(soldes[compte.id]) }} FCFA</p>
+                <h2 class="font-bold text-lg">{{ compte.nom }}</h2>
+                <p class="text-xl">Solde: {{ "%.2f"|format(soldes[compte.id]) }} FCFA</p>
             </div>
         {% endfor %}
         </div>
     {% else %}
-        <div class="bg-yellow-100 p-4 rounded mt-6">
-            <p>Aucun compte créé. Va dans "Ajouter Compte" pour commencer.</p>
-        </div>
+        <div class="bg-yellow-100 p-4 rounded mt-6"><p>Aucun compte. Clique sur "Ajouter Compte".</p></div>
     {% endif %}
-</div>
-</body>
-</html> 
+</div></body></html>
