@@ -1,12 +1,13 @@
-<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-[#004AAD] flex items-center justify-center h-screen">
-<div class="bg-white p-8 rounded-2xl shadow-lg w-96">
-<h1 class="text-2xl font-bold text-center text-[#004AAD] mb-6">Hand to Hand</h1>
-{% with messages = get_flashed_messages() %}{% if messages %}<p class="text-red-500 text-sm mb-4">{{ messages[0] }}</p>{% endif %}{% endwith %}
-<form method="POST">
-<input name="username" placeholder="Nom d'utilisateur" class="w-full p-3 border rounded-lg mb-4" required>
-<input name="password" type="password" placeholder="Mot de passe" class="w-full p-3 border rounded-lg mb-4" required>
-<button class="w-full bg-[#004AAD] text-white py-3 rounded-lg font-bold">Se Connecter</button>
-</form>
-<p class="text-center mt-4 text-sm">Pas de compte? <a href="{{ url_for('register') }}" class="text-[#F05A28] font-bold">S'inscrire</a></p>
-</div></body></html> 
+<!DOCTYPE html>
+<html lang="fr"><head><title>Login</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+<div class="bg-white p-8 rounded shadow-md w-96">
+    <h1 class="text-2xl font-bold mb-4">Connexion QPP</h1>
+    {% with messages = get_flashed_messages() %}{% if messages %}<p class="text-red-500">{{ messages[0] }}</p>{% endif %}{% endwith %}
+    <form method="POST">
+        <input name="username" placeholder="Username" class="w-full p-2 border rounded mb-2" required>
+        <input name="password" type="password" placeholder="Password" class="w-full p-2 border rounded mb-4" required>
+        <button class="w-full bg-blue-500 text-white p-2 rounded">Se connecter</button>
+    </form>
+    <p class="text-sm mt-4">Admin: admin / admin123</p>
+</div></body></html>
