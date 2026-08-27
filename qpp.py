@@ -87,7 +87,15 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# ===== CREATION DB =====
+# ===== RESET DB 1 SEULE FOIS =====
+import os
+db_path = "instance/app.db"
+os.makedirs("instance", exist_ok=True) # Crée le dossier s'il n'existe pas
+if os.path.exists(db_path):
+    os.remove(db_path)
+    print("Ancienne DB supprimée")
+
+# ===== CREATION DB PROPRE =====
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username='admin').first():
